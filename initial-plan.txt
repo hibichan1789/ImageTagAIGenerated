@@ -1,0 +1,159 @@
+ファイルアップロードアプリ(JWT認証,azure functions python でopenAIを使った画像のタグとtailwind bgColor生成)
+ 
+・ローカル環境
+フロントエンド:vite,vanilla typescript,tailwind css
+バックエンドAPI:asp.net core api
+DB:postgreSQL in docker
+API:azure functions queue trigger(openAI用の画像生成,サムネイル用の画像生成),azure functions http trigger(openAIに画像生成をしてもらうAI),Azure functions http trigger Azure Foundry(open AIを使わずに差し替え可能にする)
+storage:local storage
+ 
+・クラウド環境
+フロントエンド:azure static apps,vite,vanilla typescript,tailwind css
+バックエンドAPI:azure app service,asp.net core api
+DB:azure database for postgreSQL
+API:azure functions queue trigger(openAI用の画像生成,サムネイル用の画像生成),azure functions http trigger(openAIに画像生成をしてもらうAI)
+storage:azure blob storage
+ 
+・DB設計(ef coreのmigrationsで生成する)
+Usersテーブル
+id:integer
+email:varchar
+passwordhash:varchar
+ 
+Filesテーブル
+id:integer
+originalFileName:text
+uniqueFileName:text
+fileUrl:text
+thumbnailFileUrl:text (nullでもいいかも)
+aiProcessedFileUrl:text (nullでもいいかも)
+fileSizeBytes:biginteger (最大10MBまでにフロント表示でMBに変換)
+contentType:varchar
+fileExtension:varchar
+status:Status
+uploadedAt:datetime
+userId:integer foreignkey Users(id)
+ 
+enum Status
+processing,readyForTag,completed,error
+readyForTagのときのみopenAIにタグ生成をできるようにする,errorのときは画像圧縮処理を再びできるようにする
+ 
+FileTagsテーブル(中間テーブル的な)
+tagId: foreignkey Tags(id)
+cssStyleId: foreignkey CssStyles(id)
+fileId: integer foreignkey Files(id)
+ 
+Tagsテーブル
+id:integer
+tag:text (犬,車,人間などをopenAIで生成) Unique
+ 
+CssStylesテーブル
+id:integer
+bgColor:varchar (bg-red-500,bg-blue-500などをopenAIで生成) Unique
+ 
+tailwindCssのbgColor生成の安定化のためにpromptとvalidationでstyleの制限
+bg-red-700,bg-blue-700,bg-green-700,bg-orange-800,bg-violet-700のみにする
+ 
+・Controllers
+AuthController
+POST: api/auth/register
+POST: api/auth/login
+ 
+FilesController(Authorize)
+POST: api/files
+GET: api/files
+GET: api/files/{id}
+DELETE: api/files/{id}
+ 
+FileProcessingController(Autorize)
+POST: api/files/{id}/generate-tags
+POST: api/files/{id}/retry
+ 
+ 
+・openAI API用のSystem Prompt案
+You are an API that analyzes images.
+ 
+Your task:
+- Generate image tags and assign a Tailwind CSS background color for each tag.
+ 
+Rules:
+- Output must be JSON only (no explanation, no text).
+- Each tag must be a short Japanese noun.
+- Generate 3 to 5 tag-color pairs.
+- Each tag must have exactly one bgColor.
+ 
+Color selection rules:
+- bg-red-700: strong, danger, passion, intense objects (e.g., fire, car, action)
+- bg-blue-700: calm, water, sky, cool atmosphere
+- bg-green-700: nature, plants, outdoor environments
+- bg-orange-800: warm, active, friendly things (e.g., animals, people)
+- bg-violet-700: mysterious, creative, abstract, night scenes
+ 
+Prefer consistent color mapping:
+- Animals → bg-orange-800
+- Nature → bg-green-700
+- Water/sky → bg-blue-700
+- Action objects → bg-red-700
+- Night/abstract → bg-violet-700
+ 
+Additional constraints:
+- bgColor must be one of the following values ONLY:
+  ["bg-red-700","bg-blue-700","bg-green-700","bg-orange-800","bg-violet-700"]
+- Do not generate any value outside these options.
+- Ensure color selection matches the meaning of each tag.
+- Avoid assigning the same color to all tags; try to distribute colors appropriately.
+ 
+Output format:
+{
+  "items": [
+    { "tag": "犬", "bgColor": "bg-orange-800" },
+    { "tag": "公園", "bgColor": "bg-green-700" },
+    { "tag": "散歩", "bgColor": "bg-blue-700" }
+  ]
+}
+ 
+・実装イメージ
+public enum TailwindColor
+{
+    Red,
+    Blue,
+    Green,
+    Orange,
+    Violet,
+    Gray // fallback
+}
+ 
+public static class TailwindColorMapper
+{
+    public static TailwindColor FromString(string color)
+    {
+        return color switch
+        {
+            "bg-red-700" => TailwindColor.Red,
+            "bg-blue-700" => TailwindColor.Blue,
+            "bg-green-700" => TailwindColor.Green,
+            "bg-orange-800" => TailwindColor.Orange,
+            "bg-violet-700" => TailwindColor.Violet,
+            _ => TailwindColor.Gray
+        };
+    }
+ 
+  public static string ToCss(TailwindColor color)
+    {
+        return color switch
+        {
+            TailwindColor.Red => "bg-red-700",
+            TailwindColor.Blue => "bg-blue-700",
+            TailwindColor.Green => "bg-green-700",
+            TailwindColor.Orange => "bg-orange-800",
+            TailwindColor.Violet => "bg-violet-700",
+            _ => "bg-gray-800"
+        };
+    }
+}
+azure functions側ではopenAIが生成したJSONをparseできるかの検証と軽くobjectの形を整えて(.strip()くらいの軽い処理)ASP.NET Core APIに返却
+ASP.NET Core APIはazure functionsから帰ってきたJSONの中身を検証
+不正な色の場合はbg-gray-800に置き換える
+ 
+azure functions queue triggerでthumbnailとopenAIようの画像を生成したらstorageに保存しDBを更新
+少し結合が強くなってしまうが実装速度の向上のため妥協

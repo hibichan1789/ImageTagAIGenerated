@@ -1,0 +1,42 @@
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.vs/
+
+# --- Logs ---
+*.log
+
+# --- Environment files ---
+.env
+.env.production
+
+# --- Node / Frontend ---
+node_modules/
+dist/
+build/
+
+# --- .NET / Backend ---
+bin/
+obj/
+out/
+appsettings.Development.json
+appsettings.Production.json
+
+# --- Python (Azure Functions) ---
+__pycache__/
+*.pyc
+.venv/
+.env/
+local.settings.json  
+
+
+# --- Docker ---
+docker-compose.override.yml
+docker-data/
+pgdata/
+
+# --- Misc ---
+*.user
+*.suo
+*.tmp

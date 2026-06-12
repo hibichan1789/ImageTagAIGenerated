@@ -1,0 +1,37 @@
+# --- Git ---
+.git
+.gitignore
+
+# --- env ---
+.env*
+appsettings.*
+
+# --- Node / Frontend ---
+ImageTagFrontend/
+node_modules/
+dist/
+build/
+
+# --- .NET / Backend ---
+ImageTagApi/
+bin/
+obj/
+out/
+
+# --- Python (Azure Functions) ---
+functions/
+__pycache__/
+*.pyc
+.venv/
+local.settings.json
+
+# --- Docker ---
+Dockerfile*
+docker-compose*
+
+# --- Misc ---
+*.log
+*.md
+*.tmp
+.vscode/
+.vs/
