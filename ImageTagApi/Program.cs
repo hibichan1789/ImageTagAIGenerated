@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi;
 using ImageTagApi.Services.Files;
+using ImageTagApi.Services.Queue;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,10 +79,20 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 // Custom Storage Service
-var storageType = builder.Configuration["Storage:Type"];
+var storageType = builder.Configuration["Storage:Type"]!;
 if(storageType == "Local")
 {
     builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+}
+else
+{
+
+}
+// Custom Queue Service
+var queueType = builder.Configuration["Queue:Type"]!;
+if(queueType == "Local")
+{
+    builder.Services.AddScoped<IQueueService, LocalQueueService>();
 }
 else
 {
