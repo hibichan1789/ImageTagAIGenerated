@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "0c6412_STORAGE": "UseDevelopmentStorage=true",
+
+    "WWWROOT_PATH": "YourWWWrootPath",
+
+    "PG_HOST": "YourHost",
+    "PG_PORT": "YourPort",
+    "PG_USER": "YourDbUserName",
+    "PG_PASSWORD": "YourPassword",
+    "PG_DATABASE": "YourDB"
+    
+  }
+}

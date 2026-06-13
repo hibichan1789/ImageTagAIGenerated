@@ -1,7 +1,7 @@
 # --- OS / Editor ---
 .DS_Store
 Thumbs.db
-.vscode/
+.vscode
 .vs/
 
 # --- Logs ---
@@ -30,7 +30,9 @@ __pycache__/
 .venv/
 .env/
 local.settings.json  
-
+__azurite_db_*__.json
+__blobstorage__
+__queuestorage__
 
 # --- Docker ---
 docker-compose.override.yml

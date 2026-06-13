@@ -1,6 +1,7 @@
 ﻿using ImageTagApi.Domain.Models;
 using ImageTagApi.Domain.Enums;
 using ImageTagApi.DTOs.Files;
+using ImageTagApi.Services.Queue;
 
 namespace ImageTagApi.Services.Files
 {
@@ -9,6 +10,7 @@ namespace ImageTagApi.Services.Files
         private readonly ILogger<FileService> _logger;
         private readonly IFileStorageService _storage;
         private readonly IFileRepository _repository;
+        private readonly IQueueService _queue;
 
         // あとからファイル許容サイズの変更を変えれる
         private static readonly int _maxImageSizeMb = 10;
@@ -25,12 +27,14 @@ namespace ImageTagApi.Services.Files
         public FileService(
                 ILogger<FileService> logger,
                 IFileStorageService storage,
-                IFileRepository repository
+                IFileRepository repository,
+                IQueueService queue
             )
         {
             _logger = logger;
             _storage = storage;
             _repository = repository;
+            _queue = queue;
         }
 
         public async Task<FileUploadResponse> UploadAsync(IFormFile file, int userId)
@@ -80,6 +84,8 @@ namespace ImageTagApi.Services.Files
 
             await _repository.SaveChangesAsync();
             _logger.LogInformation("DB登録完了: fileId={fileId}", dbFile.Id);
+
+            await _queue.SendFileProcessRequestAsync(dbFile.Id);
 
             return new FileUploadResponse
             {
