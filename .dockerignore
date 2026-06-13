@@ -17,6 +17,7 @@ ImageTagApi/
 bin/
 obj/
 out/
+wwwroot
 
 # --- Python (Azure Functions) ---
 functions/
