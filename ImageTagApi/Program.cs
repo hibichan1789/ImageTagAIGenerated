@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi;
+using ImageTagApi.Services.Files;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,8 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Image Tag API with JWT Authentication"
     });
 
+
+    
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -64,15 +67,30 @@ builder.Services.AddSwaggerGen(options =>
             [new OpenApiSecuritySchemeReference("Bearer", document)] = []
         }
     );
+
+    
 });
 
 
 // Custom Service
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+// Custom Storage Service
+var storageType = builder.Configuration["Storage:Type"];
+if(storageType == "Local")
+{
+    builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+}
+else
+{
 
+}
 
 var app = builder.Build();
+
+app.UseStaticFiles();
 
 // Swagger UI(開発のみ)
 if (app.Environment.IsDevelopment())

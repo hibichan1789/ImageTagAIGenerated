@@ -20,6 +20,7 @@ build/
 bin/
 obj/
 out/
+wwwroot
 appsettings.Development.json
 appsettings.Production.json
 
