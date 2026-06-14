@@ -92,9 +92,9 @@ if(storageType == "Local")
 {
     builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 }
-else
+else if(storageType == "Azure")
 {
-
+    builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
 }
 // Custom Queue Service
 var queueType = builder.Configuration["Queue:Type"]!;
@@ -102,9 +102,9 @@ if(queueType == "Local")
 {
     builder.Services.AddScoped<IQueueService, LocalQueueService>();
 }
-else
+else if(queueType == "Azure")
 {
-
+    builder.Services.AddScoped<IQueueService, AzureQueueService>();
 }
 
 var app = builder.Build();
@@ -112,12 +112,12 @@ var app = builder.Build();
 app.UseStaticFiles();
 
 // Swagger UI(開発のみ)
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     // Swaggerをブラウザに表示する
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 

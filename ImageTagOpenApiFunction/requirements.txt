@@ -5,3 +5,4 @@
 azure-functions
 pydantic
 openai
+azure-storage-blob
