@@ -1,3 +1,4 @@
+初期構想案
 ファイルアップロードアプリ(JWT認証,azure functions python でopenAIを使った画像のタグとtailwind bgColor生成)
  
 ・ローカル環境
@@ -60,12 +61,12 @@ POST: api/auth/register
 POST: api/auth/login
  
 FilesController(Authorize)
-POST: api/files
+POST: api/files/upload
 GET: api/files
 GET: api/files/{id}
 DELETE: api/files/{id}
  
-FileProcessingController(Autorize)
+FileProcessingController(Authorize)
 POST: api/files/{id}/generate-tags
 POST: api/files/{id}/retry
  

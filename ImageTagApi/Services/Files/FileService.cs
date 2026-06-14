@@ -2,6 +2,7 @@
 using ImageTagApi.Domain.Enums;
 using ImageTagApi.DTOs.Files;
 using ImageTagApi.Services.Queue;
+using ImageTagApi.Infrastructure.Repositories;
 
 namespace ImageTagApi.Services.Files
 {
