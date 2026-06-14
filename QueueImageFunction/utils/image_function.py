@@ -43,7 +43,7 @@ def generate_ai_image(original_file_path:str, www_root:str, unique_file_name:str
     # 保存ファイル名とパス
     unique_file_name_noext = unique_file_name.split(".")[0]
     ai_relative_dir = "/images/ai"
-    ai_file_name =  f"{unique_file_name_noext}.png"
+    ai_file_name =  f"ai_{unique_file_name_noext}.png"
     ai_file_url = f"{ai_relative_dir}/{ai_file_name}"
 
     ai_save_dir = os.path.join(www_root, "images", "ai")

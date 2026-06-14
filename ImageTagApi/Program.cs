@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.OpenApi;
 using ImageTagApi.Services.Files;
 using ImageTagApi.Services.Queue;
+using ImageTagApi.Services.Ai;
+using ImageTagApi.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +79,13 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IFileService, FileService>();
+// Repository
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<ICssStyleRepository, CssStyleRepository>();
+builder.Services.AddScoped<IFileTagRepository, FileTagRepository>();
+// Azure Funcstions HttpTrigger
+builder.Services.AddHttpClient<IAiFunctionService, OpenAiFunctionService>();
 // Custom Storage Service
 var storageType = builder.Configuration["Storage:Type"]!;
 if(storageType == "Local")

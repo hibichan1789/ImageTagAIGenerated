@@ -4,6 +4,18 @@ namespace ImageTagApi.Domain.ValueObjects
 {
     public static class TailWindColorMapper
     {
+        private static string[] cssBgColor = { "bg-red-700", "bg-blue-700", "bg-green-700", "bg-orange-800", "bg-violet-700" };
+        public static string ValidateBgColor(string color)
+        {
+            if (cssBgColor.Contains(color))
+            {
+                return color;
+            }
+            else
+            {
+                return "bg-gray-700";
+            }
+        }
         public static TailWindColor ToEnum(string color)
         {
             return color switch

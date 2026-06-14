@@ -1,8 +1,9 @@
 ﻿using ImageTagApi.Context;
+using ImageTagApi.Domain.Enums;
 using ImageTagApi.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ImageTagApi.Services.Files
+namespace ImageTagApi.Infrastructure.Repositories
 {
     public class FileRepository:IFileRepository
     {
@@ -23,15 +24,37 @@ namespace ImageTagApi.Services.Files
             return file;
         }
 
-        public async Task<DbFile?> GetByIdAsync(int id, int userId)
+        public async Task UpdateStatusAsync(int id, FileStatus status)
         {
-            return await _db.Files.FirstOrDefaultAsync(f => f.Id == id && f.UserId == userId);
+            var file = await _db.Files.FindAsync(id);
+            if(file == null)
+            {
+                _logger.LogWarning("ファイルのレコードが見つかりません: FileId={FileId}", id);
+                return;
+            }
+
+            file.Status = status;
+            await SaveChangesAsync();
+        }
+
+        public async Task<DbFile?> GetByIdAsync(int id)
+        {
+            return await _db.Files
+                .Include(f => f.FileTags)
+                .ThenInclude(f => f.Tag)
+                .Include(f => f.FileTags)
+                .ThenInclude(f => f.CssStyle)
+                .FirstOrDefaultAsync(f => f.Id == id);
         }
 
         public async Task<IEnumerable<DbFile>> GetByUserIdAsync(int userId)
         {
             return await _db.Files
                 .Where(f => f.UserId == userId)
+                .Include(f => f.FileTags)
+                .ThenInclude(f => f.Tag)
+                .Include(f => f.FileTags)
+                .ThenInclude(f => f.CssStyle)
                 .OrderBy(f => f.UploadedAt)
                 .ToListAsync();
         }
