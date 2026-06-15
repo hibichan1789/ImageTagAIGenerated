@@ -1,0 +1,52 @@
+import { login } from "../../api/authApi";
+import type { LoginRequest } from "../../types/auth";
+
+
+// HTML要素の取得
+const form = document.getElementById("loginForm") as HTMLFormElement;
+const emailInput = document.getElementById("email") as HTMLInputElement;
+const passwordInput = document.getElementById("password") as HTMLInputElement;
+
+// フォーム送信イベント
+form.addEventListener("submit", async(e)=>{
+    e.preventDefault();
+
+    const email = emailInput.value;
+    const password = passwordInput.value;
+
+    // 簡単なバリデーション
+    if(!email && !password){
+        alert("メールアドレスとパスワードの入力をしてください");
+        return;
+    }
+    if(!email){
+        alert("メールアドレスの入力をしてください");
+        return;
+    }
+    if(!password){
+        alert("パスワードの入力をしてください");
+        return;
+    }
+
+    const loginRequest:LoginRequest = {
+        email,
+        password
+    };
+
+    // API呼び出し
+    try{
+        const response = await login(loginRequest);
+
+        localStorage.setItem("token", response.token);
+
+        window.alert("ログインに成功しました");
+        location.href = "../file/file.html";
+    }
+    catch(err:any){
+        const message =
+            err.response?.data?.message ||
+            err.response?.data?.errors ||
+            "ログインに失敗しました";
+            alert(message);
+    }
+});

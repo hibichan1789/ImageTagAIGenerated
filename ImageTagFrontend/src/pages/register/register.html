@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <script type="module" src="./register.ts" defer></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded shadow max-w-sm w-full">
+        <h1 class="text-2xl font-bold mb-6 text-center">ユーザー登録</h1>
+
+        <form id="registerForm" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+                <label for="email" class="text-sm font-medium">メールアドレス</label>
+                <input type="email" id="email" placeholder="メールアドレス" required
+                    class="border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+            </div>
+            <div class="flex flex-col gap-1">
+                <label for="password" class="text-sm font-medium">パスワード</label>
+                <input type="password" id="password" placeholder="パスワード" required
+                    class="border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white rounded p-2 hover:bg-blue-700 hover:cursor-pointer transition">登録</button>
+        </form>
+
+        <p class="text-center mt-4 text-sm">すでにアカウントはありますか?
+            <a href="../login/login.html" class="text-blue-600 underline">ログインはこちら</a>
+        </p>
+    </div>
+</body>
+
+</html>

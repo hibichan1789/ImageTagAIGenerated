@@ -21,6 +21,19 @@ builder.Services.AddDbContext<MyContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+              
+    });
+});
+
 // JWT
 var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -109,7 +122,11 @@ else if(queueType == "Azure")
 
 var app = builder.Build();
 
-app.UseStaticFiles();
+if (app.Environment.IsDevelopment())
+{
+    app.UseStaticFiles();
+}
+
 
 // Swagger UI(開発のみ)
 //if (app.Environment.IsDevelopment())
@@ -120,6 +137,10 @@ app.UseStaticFiles();
 //}
 
 app.UseHttpsRedirection();
+app.UseRouting();
+
+// CORS
+app.UseCors("AllowFrontend");
 
 //認証・認可
 app.UseAuthentication();
