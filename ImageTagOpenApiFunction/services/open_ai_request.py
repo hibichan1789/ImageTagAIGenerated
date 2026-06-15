@@ -2,6 +2,8 @@ import json
 import os
 from openai import AsyncOpenAI
 import base64
+import logging
+
 
 system_prompt = """"Your task:
 - Generate image tags and assign a Tailwind CSS background color for each tag.
@@ -55,6 +57,8 @@ async def fetch_chat_response(ai_image_path:str):
     """
     base64_img = encode_image(ai_image_path)
 
+    logging.info(f"Calling OpenAI with image_path = {ai_image_path}")
+
     response = await client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -74,6 +78,9 @@ async def fetch_chat_response(ai_image_path:str):
 
     # 戻り値がnullの場合もある
     raw = response.choices[0].message.content
+
+    logging.info(f"OpenAI raw response: {raw}")
+
     if raw is not None:
         clean_json = raw.replace("```json", "").replace("```", "").strip()
         return json.loads(clean_json)

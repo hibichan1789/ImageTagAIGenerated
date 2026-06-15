@@ -16,10 +16,12 @@ async def generate_tags(req: func.HttpRequest) -> func.HttpResponse:
 
     
     body = req.get_json()
+    logging.info(f"Request Body: {body}")
     ai_tag_request = AiTagRequest(**body)
 
     # ai処理用のurlの取得 例:ai_processed_file_url= /images/ai/ai_*.png
     ai_processed_file_url = ai_tag_request.ai_processed_file_url
+    logging.info(f"ai_processed_file_url : {ai_processed_file_url}")
     # 環境変数www_rootを作って、環境変数からpathをファイルのルートからpathを作成して、画像の取得をする
     ai_image_path = get_ai_image_path(ai_processed_file_url)
     if ai_image_path is None:
