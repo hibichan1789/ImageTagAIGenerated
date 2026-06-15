@@ -43,17 +43,19 @@ namespace ImageTagApi.Services.Auth
             }
 
             _logger.LogInformation("email: {email}のユーザーの認証成功",email);
-            string token = GenerateJwtToken(user);
+            DateTime expiredAt = DateTime.UtcNow.AddMinutes(30);
+            string token = GenerateJwtToken(user, expiredAt);
 
             return new LoginResponse
             {
                 UserId = user.Id,
                 Email = user.Email,
-                Token = token
+                Token = token,
+                ExpiredAt = expiredAt
             };
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(User user, DateTime expiredAt)
         {
             // JWTの書名に使う秘密鍵
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
@@ -69,7 +71,7 @@ namespace ImageTagApi.Services.Auth
                     issuer: _config["Jwt:Issuer"]!,
                     audience: _config["Jwt:Audience"]!,
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(30),
+                    expires: expiredAt,
                     signingCredentials: creds
                 );
 

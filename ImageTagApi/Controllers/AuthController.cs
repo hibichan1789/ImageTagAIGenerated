@@ -43,7 +43,7 @@ namespace ImageTagApi.Controllers
             _logger.LogInformation("email: {email}のユーザーが登録されました", registeredUser.Email);
             return Ok(new
             {
-                id = registeredUser.Id,
+                userId = registeredUser.Id,
                 email = registeredUser.Email,
                 message = "ユーザー登録が完了しました"
             });
