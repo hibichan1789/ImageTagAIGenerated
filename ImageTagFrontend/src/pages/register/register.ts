@@ -35,7 +35,7 @@ form.addEventListener("submit", async (e) => {
         await register(registerRequest);
 
         window.alert("ユーザー登録が完了しました");
-        window.location.href = "/src/pages/login/login.html";
+        window.location.href = "index.html";
     }
     catch (err: any) {
         const message =

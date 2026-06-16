@@ -1,5 +1,5 @@
-import { login } from "../../api/authApi";
-import type { LoginRequest } from "../../types/auth";
+import { login } from "./src/api/authApi";
+import type { LoginRequest } from "./src/types/auth";
 
 
 // HTML要素の取得
@@ -40,7 +40,7 @@ form.addEventListener("submit", async(e)=>{
         localStorage.setItem("token", response.token);
 
         window.alert("ログインに成功しました");
-        location.href = "/src/pages/home/index.html";
+        location.href = "/src/pages/home/home.html";
     }
     catch(err:any){
         const message =
