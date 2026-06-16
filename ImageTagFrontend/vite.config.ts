@@ -8,7 +8,7 @@ export default defineConfig({
         rollupOptions:{
             input:{
                 home:"src/pages/home/index.html",
-                login: "src/pages/login/login.html",
+                index: "src/pages/login/login.html",
                 register: "src/pages/register/register.html"
             }
         }
