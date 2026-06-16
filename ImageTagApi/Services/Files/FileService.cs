@@ -3,6 +3,7 @@ using ImageTagApi.Domain.Enums;
 using ImageTagApi.DTOs.Files;
 using ImageTagApi.Services.Queue;
 using ImageTagApi.Infrastructure.Repositories;
+using ImageTagApi.DTOs.Ai;
 
 namespace ImageTagApi.Services.Files
 {
@@ -36,6 +37,24 @@ namespace ImageTagApi.Services.Files
             _storage = storage;
             _repository = repository;
             _queue = queue;
+        }
+
+        public async Task<IEnumerable<FileListItemResponse>> GetFilesByUserIdAsync(int userId)
+        {
+            var files = await _repository.GetByUserIdAsync(userId);
+
+            return files.Select(f => new FileListItemResponse
+            {
+                FileId = f.Id,
+                OriginalFileName = f.OriginalFileName,
+                Status = f.Status,
+                ThumbnailUrl = f.ThumbnailFileUrl != null ? _storage.GenerateSasUrl(f.ThumbnailFileUrl) : null,
+                Tags = f.FileTags.Select(ft => new AiTagItem
+                {
+                    Tag = ft.Tag.Value,
+                    BgColor = ft.CssStyle.BgColor
+                })
+            });
         }
 
         public async Task<FileUploadResponse> UploadAsync(IFormFile file, int userId)

@@ -40,7 +40,7 @@ form.addEventListener("submit", async(e)=>{
         localStorage.setItem("token", response.token);
 
         window.alert("ログインに成功しました");
-        location.href = "../file/file.html";
+        location.href = "/src/pages/home/index.html";
     }
     catch(err:any){
         const message =
