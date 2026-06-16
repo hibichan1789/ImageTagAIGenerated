@@ -95,7 +95,7 @@ function renderTagFilter(files:FileListItemResponse[]){
         const isActive = activeTags.has(tag);
         tagButton.className = 
         `
-        px-3 py-1 rounded-full text-sm font-semibold ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"} 
+        px-3 py-1.5 rounded-full text-md lg:text-xs font-semibold ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"} 
         hover:bg-blue-500 hover:text-white transition
         `;
 
@@ -218,7 +218,7 @@ function createAiAnalyzedTagsContainer(tags: AiTagItem[]): HTMLDivElement {
     tags.forEach(t => {
         const tag = document.createElement("span");
         tag.textContent = t.tag;
-        tag.className = `${t.bgColor} text-white font-semibold px-2 py-1 rounded-full text-xs`;
+        tag.className = `${t.bgColor} text-white font-semibold px-3 py-1.5 rounded-full text-md lg:text-xs`;
         tag.style.backgroundColor = t.bgColor;
         tagContainer.appendChild(tag);
     });
