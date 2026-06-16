@@ -1,4 +1,5 @@
 ﻿
+using ImageTagApi.DTOs.Files;
 using ImageTagApi.Services.Files;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,23 @@ namespace ImageTagApi.Controllers
         {
             _logger = logger;
             _fileService = fileService;
+        }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<FileListItemResponse>>> GetFiles()
+        {
+            _logger.LogInformation("GET: api/files");
+
+            var userClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if(userClaim == null)
+            {
+                return Unauthorized(new { message = "ユーザー情報が取得できません" });
+            }
+
+            int userId = int.Parse(userClaim.Value);
+
+            var files = await _fileService.GetFilesByUserIdAsync(userId);
+
+            return Ok(files);
         }
 
         [HttpPost("upload")]

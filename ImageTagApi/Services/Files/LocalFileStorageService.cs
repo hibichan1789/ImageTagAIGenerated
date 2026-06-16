@@ -46,5 +46,10 @@ namespace ImageTagApi.Services.Files
                 FileExtension = ext
             };
         }
+
+        public string GenerateSasUrl(string thumbnailUrl, int mituteExpired = 5)
+        {
+            return thumbnailUrl;
+        }
     }
 }

@@ -29,7 +29,7 @@ api.interceptors.response.use(
     (error)=>{
         if(error.response?.status == 401){
             localStorage.removeItem("token");
-            window.location.href = "/pages/login/login.html";
+            window.location.href = "/src/pages/login/login.html";
         }
         console.error("API Error;", error.response?.data || error.message);
         return Promise.reject(error);

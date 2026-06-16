@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using ImageTagApi.DTOs.Files;
+using Azure.Storage.Sas;
 namespace ImageTagApi.Services.Files
 {
     public class AzureBlobStorageService:IFileStorageService
@@ -50,6 +51,41 @@ namespace ImageTagApi.Services.Files
                 FileUrl = fileUrl.ToString(),
                 FileExtension = ext
             };
+        }
+
+        public string GenerateSasUrl(string thumbnailUrl, int mituteExpired = 10)
+        {
+            var blobPath = GetBlobPathFromUrl(thumbnailUrl);
+
+            
+            var blobClient = _containerClient.GetBlobClient(blobPath);
+
+            var sasBuilder = new BlobSasBuilder
+            {
+                BlobContainerName = _containerClient.Name,
+                BlobName = blobPath,
+                Resource = "b",
+                ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(mituteExpired)
+            };
+
+            sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+            var sasUrl = blobClient.GenerateSasUri(sasBuilder);
+
+            return sasUrl.ToString();
+        }
+
+        private string GetBlobPathFromUrl(string url)
+        {
+            var localPath = new Uri(url).LocalPath;
+            var path = localPath.TrimStart('/');
+
+            if(path.StartsWith(_containerClient.Name + "/"))
+            {
+                path = path.Substring(_containerClient.Name.Length + 1);
+            }
+
+            return path;
         }
     }
 }
