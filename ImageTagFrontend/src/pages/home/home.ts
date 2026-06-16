@@ -232,5 +232,5 @@ logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("token");
 
     // ログインページへ遷移
-    window.location.href = "index.html";
+    window.location.href = "/index.html";
 });
