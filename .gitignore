@@ -23,6 +23,7 @@ out/
 wwwroot
 appsettings.Development.json
 appsettings.Production.json
+*.pubxml*
 
 # --- Python (Azure Functions) ---
 __pycache__/
