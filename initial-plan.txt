@@ -18,43 +18,51 @@ storage:azure blob storage
 ・DB設計(ef coreのmigrationsで生成する)
 Usersテーブル
 id:integer
-email:varchar
-passwordhash:varchar
+email:varchar(255) unique
+passwordhash:text
+createdAt:datetimeOffset
+
  
 Filesテーブル
 id:integer
 originalFileName:text
-uniqueFileName:text
+uniqueFileName:varchar(255)
 fileUrl:text
-thumbnailFileUrl:text (nullでもいいかも)
-aiProcessedFileUrl:text (nullでもいいかも)
+thumbnailFileUrl:text or null
+aiProcessedFileUrl:text or null
 fileSizeBytes:biginteger (最大10MBまでにフロント表示でMBに変換)
-contentType:varchar
-fileExtension:varchar
+contentType:varchar(255)
+fileExtension:varchar(50)
 status:Status
-uploadedAt:datetime
+uploadedAt:datetimeOffset
 userId:integer foreignkey Users(id)
- 
-enum Status
-processing,readyForTag,completed,error
-readyForTagのときのみopenAIにタグ生成をできるようにする,errorのときは画像圧縮処理を再びできるようにする
- 
-FileTagsテーブル(中間テーブル的な)
+  
+FileTagsテーブル(中間テーブルな)
 tagId: foreignkey Tags(id)
 cssStyleId: foreignkey CssStyles(id)
 fileId: integer foreignkey Files(id)
  
 Tagsテーブル
 id:integer
-tag:text (犬,車,人間などをopenAIで生成) Unique
+value:text (犬,車,人間などをopenAIで生成) Unique
  
 CssStylesテーブル
 id:integer
-bgColor:varchar (bg-red-500,bg-blue-500などをopenAIで生成) Unique
+bgColor:varchar(50) (bg-red-500,bg-blue-500などをopenAIで生成) Unique
+tailwindColor:TailWindColor
  
-tailwindCssのbgColor生成の安定化のためにpromptとvalidationでstyleの制限
-bg-red-700,bg-blue-700,bg-green-700,bg-orange-800,bg-violet-700のみにする
+
+
+enum TailWindColor
+red,blue,green,orange,violet,gray(AI生成がうまくいかない時)
  
+enum Status
+processing,readyForTag,completed,error
+readyForTagのときのみopenAIにタグ生成をできるようにする,errorのときは画像圧縮処理を再びできるようにする
+
+
+
+
 ・Controllers
 AuthController
 POST: api/auth/register
@@ -63,15 +71,13 @@ POST: api/auth/login
 FilesController(Authorize)
 POST: api/files/upload
 GET: api/files
-GET: api/files/{id}
-DELETE: api/files/{id}
  
 FileProcessingController(Authorize)
 POST: api/files/{id}/generate-tags
 POST: api/files/{id}/retry
  
  
-・openAI API用のSystem Prompt案
+・openAI API用のSystem Prompt
 You are an API that analyzes images.
  
 Your task:
@@ -124,6 +130,8 @@ public enum TailwindColor
     Gray // fallback
 }
  
+
+・こんな感じのMapperクラスを作成する
 public static class TailwindColorMapper
 {
     public static TailwindColor FromString(string color)
@@ -152,6 +160,8 @@ public static class TailwindColorMapper
         };
     }
 }
+
+・構想時の展望と懸念点
 azure functions側ではopenAIが生成したJSONをparseできるかの検証と軽くobjectの形を整えて(.strip()くらいの軽い処理)ASP.NET Core APIに返却
 ASP.NET Core APIはazure functionsから帰ってきたJSONの中身を検証
 不正な色の場合はbg-gray-800に置き換える
