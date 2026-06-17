@@ -133,7 +133,7 @@ https://green-sky-0aeb51b00.7.azurestaticapps.net/index.html
 ---
 
 
-##　TailwindColorMapper（C#）
+## TailwindColorMapper（C#）
 
 ```csharp
 public static class TailwindColorMapper
