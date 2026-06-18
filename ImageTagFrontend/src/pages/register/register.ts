@@ -4,6 +4,7 @@ import type { RegisterRequest } from "../../types/auth";
 const form = document.getElementById("registerForm") as HTMLFormElement;
 const emailInput = document.getElementById("email") as HTMLInputElement;
 const passwordInput = document.getElementById("password") as HTMLInputElement;
+const registerBtn = document.getElementById("registerBtn") as HTMLButtonElement;
 
 
 form.addEventListener("submit", async (e) => {
@@ -31,6 +32,9 @@ form.addEventListener("submit", async (e) => {
         password
     };
 
+    // ボタンの連続クリックを防ぐ
+    registerBtn.disabled = true;
+
     try {
         await register(registerRequest);
 
@@ -43,5 +47,8 @@ form.addEventListener("submit", async (e) => {
             err.response?.data?.errors ||
             "登録に失敗しました";
         window.alert(message);
+
+        // 失敗したらボタンを使えるようにする
+        registerBtn.disabled = false;
     }
 })

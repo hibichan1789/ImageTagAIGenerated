@@ -45,18 +45,18 @@ uploadForm.addEventListener("submit", async (e) => {
     const file = fileInput.files?.[0];
     if (!file) {
         uploadMessage.textContent = "ファイルを選択してください";
-        uploadMessage.className = "text-red-600 text-sm mt-2";
+        uploadMessage.className = "text-red-600 text-base mt-2";
         return;
     }
 
     uploadMessage.textContent = "アップロード中...";
-    uploadMessage.className = "text-gray-600 text-sm mt-2";
+    uploadMessage.className = "text-gray-600 text-base mt-2";
 
     try {
         await uploadFile(file);
 
         uploadMessage.textContent = "アップロード成功";
-        uploadMessage.className = "text-green-600 text-sm mt-2";
+        uploadMessage.className = "text-green-600 text-base mt-2";
 
         // 入力をクリア
         fileInput.value = "";
@@ -64,7 +64,7 @@ uploadForm.addEventListener("submit", async (e) => {
     }
     catch (err) {
         uploadMessage.textContent = "アップロードに失敗しました";
-        uploadMessage.className = "text-red-600 text-sm mt-2";
+        uploadMessage.className = "text-red-600 text-base mt-2";
     }
 });
 
@@ -95,8 +95,8 @@ function renderTagFilter(files:FileListItemResponse[]){
         const isActive = activeTags.has(tag);
         tagButton.className = 
         `
-        px-3 py-1.5 rounded-full text-md lg:text-xs font-semibold ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"} 
-        hover:bg-blue-500 hover:text-white transition
+        px-3 py-1.5 rounded-full text-base shadow-[0_4px_0_0_#d1d5db] font-semibold ${isActive ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"} 
+        hover:bg-blue-500 hover:text-white transition active:translate-y-1 active:shadow-none
         `;
 
         tagButton.addEventListener("click", ()=>{
@@ -130,14 +130,14 @@ function renderFileList(files: FileListItemResponse[]) {
 
 function createFileCard(file: FileListItemResponse): HTMLDivElement {
     const card = document.createElement("div");
-    card.className = "bg-white p-4 rounded-lg shadow hover:scale-[1.02] hover:shadow-xl transition-all duration-200 p-4 flex flex-col";
+    card.className = "bg-white p-4 rounded-lg shadow hover:scale-[1.02] hover:shadow-xl transition-all duration-200 flex flex-col";
 
     // サムネイル
     // Thumbnail Imageは画像サイズがすべてwidth:960,height:540のサイズだからいい感じに調整したい
     if (file.thumbnailUrl) {
         const img = document.createElement("img");
         img.src = file.thumbnailUrl;
-        img.className = "w-full aspect-[16/9] object-cover rounded object-color rounded-md";
+        img.className = "w-full aspect-[16/9] object-cover rounded rounded-md";
         card.appendChild(img);
     }
 
@@ -152,7 +152,7 @@ function createFileCard(file: FileListItemResponse): HTMLDivElement {
     // Status
     const status = document.createElement("p");
     status.textContent = statusToString(file.status);
-    status.className = `text-center inline-block mt-2 p-1  text-xs font-bold rounded ${statusColor(file.status)}`;
+    status.className = `text-center inline-block mt-2 p-1  text-base font-bold rounded ${statusColor(file.status)}`;
     card.appendChild(status);
 
     // AIタグ生成ボタン
@@ -161,7 +161,7 @@ function createFileCard(file: FileListItemResponse): HTMLDivElement {
         const aiProcessBtn = document.createElement("button");
         aiProcessBtn.textContent = "AIタグ生成";
         aiProcessBtn.className =
-            "mt-3 bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition text-sm hover:cursor-pointer";
+            "mt-3 bg-blue-600 text-white px-4 py-3 rounded hover:bg-blue-700 transition text-base hover:cursor-pointer";
 
         aiProcessBtn.addEventListener("click", async () => {
             aiProcessBtn.textContent = "生成中...";
@@ -184,7 +184,7 @@ function createFileCard(file: FileListItemResponse): HTMLDivElement {
         const retryBtn = document.createElement("button");
         retryBtn.textContent = "再処理";
         retryBtn.className =
-            "mt-3 bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 transition text-sm hover:cursor-pointer";
+            "mt-3 bg-red-600 text-white px-4 py-3 rounded hover:bg-red-700 transition text-base hover:cursor-pointer";
 
         retryBtn.addEventListener("click", async () => {
             retryBtn.textContent = "再処理中...";
@@ -218,8 +218,7 @@ function createAiAnalyzedTagsContainer(tags: AiTagItem[]): HTMLDivElement {
     tags.forEach(t => {
         const tag = document.createElement("span");
         tag.textContent = t.tag;
-        tag.className = `${t.bgColor} text-white font-semibold px-3 py-1.5 rounded-full text-md lg:text-xs`;
-        tag.style.backgroundColor = t.bgColor;
+        tag.className = `${t.bgColor} text-white font-semibold px-3 py-1.5 rounded-full text-base lg:text-xs`;
         tagContainer.appendChild(tag);
     });
 
