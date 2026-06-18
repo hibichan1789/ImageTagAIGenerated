@@ -6,7 +6,7 @@ const baseURL:string = import.meta.env.VITE_API_BASE_URL;
 // axiosインスタンスの作成
 export const api = axios.create({
     baseURL: baseURL, // ASP.NET Core APIのURL: // http://localhost:5095/api
-    timeout: 10 * 1000 // タイムアウト10 * 1000ms
+    timeout: 30 * 1000 // タイムアウト30 * 1000ms azure functionsのコールドスタートでも耐えれるように長めの時間に設定する
 })
 
 // リクエスト前に割り込んでJWTを自動で付与する
